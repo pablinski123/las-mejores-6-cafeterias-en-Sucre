@@ -1,0 +1,599 @@
+* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f9f5f0;
+            color: #5d4037;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #6f4e37;
+            color: #fff;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .intro h2 {
+            color: #6f4e37;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .intro p {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        .cafeterias-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .cafeteria-card {
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .cafeteria-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .cafeteria-img {
+            height: 200px;
+            width: 100%;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .cafeteria-info {
+            padding: 1.5rem;
+        }
+
+        .cafeteria-info h3 {
+            color: #6f4e37;
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .cafeteria-info .location {
+            color: #8d6e63;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .cafeteria-info .location i {
+            margin-right: 0.5rem;
+        }
+
+        .cafeteria-info p {
+            margin-bottom: 1rem;
+            color: #5d4037;
+        }
+
+        .cafeteria-info .hours {
+            font-size: 0.9rem;
+            color: #8d6e63;
+            margin-bottom: 1rem;
+        }
+
+        .rating {
+            color: #ffa000;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #6f4e37;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #5d4037;
+        }
+
+        .map-section {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 3rem;
+        }
+
+        .map-section h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #6f4e37;
+        }
+
+        .map-container {
+            height: 400px;
+            background-color: #e0e0e0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8d6e63;
+            font-size: 1.2rem;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .feature-card i {
+            font-size: 2.5rem;
+            color: #6f4e37;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 1rem;
+            color: #6f4e37;
+        }
+
+        footer {
+            background-color: #6f4e37;
+            color: #fff;
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .social-links {
+            margin: 1.5rem 0;
+        }
+
+        .social-links a {
+            color: #fff;
+            font-size: 1.5rem;
+            margin: 0 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #d7ccc8;
+        }
+
+        @media (max-width: 768px) {
+            .cafeterias-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .intro h2 {
+                font-size: 1.5rem;
+            }
+        }
+/* ===== NAVEGACIÓN PRINCIPAL ===== */
+nav {
+    background: linear-gradient(135deg, #7da826, #95c43f);
+    border-radius: 10px;
+    padding: 1rem 2rem;
+    margin: 20px auto;
+    width: 80%;
+    max-width: 1000px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+/* Estilo general de los enlaces */
+nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    font-size: 1.1rem;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+/* Subrayado animado al pasar el mouse */
+nav a::after {
+    content: "";
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    bottom: -5px;
+    left: 0;
+    background-color: #fff;
+    transition: width 0.3s ease;
+}
+
+nav a:hover::after {
+    width: 100%;
+}
+
+nav a:hover {
+    color: #f0f8e8;
+}
+
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        width: 90%;
+        padding: 1rem;
+    }
+
+    nav a {
+        font-size: 1rem;
+    }
+}
+body {
+  background-image: url("./imagenes/texto\ en\ blanco\ y\ ne.png"); /* 🔹 Ruta de tu imagen */
+  background-repeat: no-repeat;           /* No repetir la imagen */
+  background-position: center;            /* Centrada */
+  background-attachment: fixed;           /* Fija al hacer scroll */
+  background-size: 800px;                 /* Tamaño ajustado */
+  opacity: 0.95;                          /* Ligera transparencia del contenido */
+}
+
+/* ===== Efectos adicionales para la navegación (animaciones, glow, ripples) ===== */
+
+/* Hacer nav más 'vivo' con blur/glass y animación sutil de fondo */
+nav {
+    position: relative;
+    overflow: visible;
+    /* reforzar apariencia tipo cristal */
+    backdrop-filter: blur(6px) saturate(120%);
+    -webkit-backdrop-filter: blur(6px) saturate(120%);
+    background: linear-gradient(90deg, rgba(123,90,71,0.92) 0%, rgba(90,63,50,0.92) 100%);
+    transition: box-shadow .28s ease, transform .18s ease;
+    border: 1px solid rgba(255,255,255,0.04);
+}
+
+/* brillo / partículas sutiles en movimiento */
+nav::before {
+    content: "";
+    position: absolute;
+    inset: -30% -10% auto -10%;
+    height: 160%;
+    width: 120%;
+    background:
+      radial-gradient(circle at 10% 20%, rgba(255,255,255,0.04), transparent 10%),
+      radial-gradient(circle at 80% 80%, rgba(0,0,0,0.03), transparent 12%);
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    animation: navFloat 18s linear infinite;
+    opacity: 0.9;
+}
+
+@keyframes navFloat {
+    0% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-6px) rotate(0.3deg); }
+    100% { transform: translateY(0) rotate(0deg); }
+}
+
+/* efecto hover general para todo el nav */
+nav:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+}
+
+/* mejoras en enlaces: levantamiento, sombra y línea degradada animada */
+nav a {
+    position: relative;
+    transition: transform .18s cubic-bezier(.2,.9,.2,1), color .18s ease, box-shadow .18s ease;
+    will-change: transform;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* subrayado degradado animado (escala X) */
+nav a::after {
+    content: "";
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    bottom: -6px;
+    height: 3px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #ffd54f 0%, #ff8a65 50%, #a1887f 100%);
+    transform-origin: left center;
+    transform: scaleX(0);
+    transition: transform .28s cubic-bezier(.2,.9,.2,1), opacity .18s ease;
+    opacity: 0.98;
+}
+
+/* efecto hover y foco */
+nav a:hover,
+nav a:focus {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.14);
+    color: #fff;
+    outline: none;
+}
+nav a:hover::after,
+nav a:focus::after,
+nav a.active::after {
+    transform: scaleX(1);
+}
+
+/* efecto 'glow' y foco visible accesible */
+nav a:focus-visible {
+    outline: 3px solid rgba(255, 235, 205, 0.55);
+    outline-offset: 4px;
+    border-radius: 8px;
+}
+
+/* ripple simple al hacer click (pseudo-ripple con transform) */
+nav a::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    transition: transform .4s cubic-bezier(.2,.8,.2,1), opacity .28s ease;
+    pointer-events: none;
+}
+nav a:active::before {
+    transform: translate(-50%, -50%) scale(18);
+    opacity: 0.06;
+    transition: transform .45s cubic-bezier(.2,.8,.2,1), opacity .45s ease;
+}
+
+/* pequeño pulso en el logo para llamar la atención */
+header .logo {
+    display: inline-block;
+    transition: transform .32s ease;
+}
+header .logo:hover {
+    transform: translateY(-6px) rotate(-6deg) scale(1.03);
+    filter: drop-shadow(0 10px 18px rgba(0,0,0,0.18));
+}
+
+/* ocultar subrayado en dispositivos pequeños y mejorar padding */
+@media (max-width: 768px) {
+    nav a::after { display: none; }
+    nav { padding: .9rem 1rem; }
+}
+
+/* compatibilidad y mejoras visuales para links activos */
+.nav-links a.active {
+    transform: translateY(-3px);
+    background: rgba(255,255,255,0.12);
+    box-shadow: 0 12px 26px rgba(0,0,0,0.16);
+    color: #3e2723;
+}
+
+/* transición suave cuando tarjetas se filtran/ocultan */
+.cafeteria-card {
+    transition: opacity .28s ease, transform .28s ease, filter .28s ease;
+}
+.cafeteria-card.hidden {
+    opacity: 0;
+    transform: scale(.99) translateY(6px);
+    pointer-events: none;
+}
+
+/* pequeño ajuste para mejorar lectura sobre el background-image */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(249,245,240,0.02), rgba(0,0,0,0.02));
+    pointer-events: none;
+    mix-blend-mode: multiply;
+}
+/* Mejora global para enlaces <a> */
+a {
+    color: #6f4e37;                     /* color base coherente con el tema */
+    text-decoration: none;
+    text-underline-offset: 4px;
+    -webkit-text-decoration-color: transparent;
+    text-decoration-color: transparent;
+    transition: color .18s ease, transform .12s ease, text-decoration-color .18s ease;
+    cursor: pointer;
+    box-shadow: inset 0 -2px 0 rgba(111,78,55,0.15);
+    
+}
+
+/* Ajustes finales para mejorar responsividad en celulares pequeños */
+@media (max-width: 480px) {
+
+  /* Reducir padding general y tamaños de cabecera */
+  header {
+    padding: 0.9rem 0;
+  }
+  .logo {
+    font-size: 1.4rem;
+    margin-bottom: .4rem;
+  }
+  h1 {
+    font-size: 1.25rem;
+    margin-bottom: .25rem;
+  }
+  .tagline {
+    font-size: .95rem;
+    padding: 0 .5rem;
+    max-width: 100%;
+  }
+
+  /* Contenedor más estrecho y compacto */
+  .container {
+    padding: .5rem;
+    max-width: 100%;
+  }
+  .intro {
+    padding: .75rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Filas / tarjetas: 1 columna, gap reducido */
+  .card-row,
+  .cafeterias-grid {
+    gap: .6rem;
+  }
+  .card-row {
+    grid-template-columns: 1fr !important;
+  }
+  .cafeteria-card {
+    box-shadow: 0 6px 10px rgba(0,0,0,0.06);
+  }
+
+  /* Imágenes y contenido más compactos */
+  .cafeteria-img {
+    aspect-ratio: 4/3;
+    height: auto;
+    min-height: 120px;
+  }
+  .cafeteria-info {
+    padding: .6rem;
+    gap: .35rem;
+  }
+  .cafeteria-info h3 {
+    font-size: 1rem;
+  }
+  .cafeteria-info p,
+  .hours,
+  .location {
+    font-size: .9rem;
+  }
+
+  /* Botones ocupan todo el ancho y son más pequeños */
+  .btn {
+    display: block;
+    width: 100%;
+    padding: .5rem .7rem;
+    min-width: unset;
+    border-radius: 8px;
+    font-size: .95rem;
+  }
+
+  /* Mapas y secciones secundarias compactas */
+  .map-container {
+    height: 200px;
+  }
+  .map-section, .features, .feature-card {
+    padding: .8rem;
+  }
+  .feature-card i { font-size: 2rem; }
+
+  /* Navegación compacta */
+  nav {
+    padding: .6rem;
+    width: 95%;
+    gap: .6rem;
+  }
+  nav a {
+    font-size: .95rem;
+  }
+
+  /* Footer y enlaces sociales */
+  .social-links a {
+    font-size: 1.2rem;
+    margin: 0 .6rem;
+  }
+
+  /* Ajuste de fondo para no ocupar espacio vertical en móvil */
+  body {
+    background-size: 180px auto;
+    background-attachment: scroll;
+  }
+}
+
+/* Pequeño ajuste genérico para tablets / móviles grandes */
+@media (min-width: 481px) and (max-width: 768px) {
+  .card-row { grid-template-columns: repeat(2, 1fr); gap: .8rem; }
+  .container { padding: .8rem; }
+  .cafeteria-img { min-height: 140px; }
+  .btn { padding: .55rem .85rem; min-width: 120px; }
+}
+
+/* Opcional: fuerza alturas iguales en tarjetas (si hay contenido desigual) */
+.card-row .cafeteria-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.card-row .cafeteria-card .cafeteria-info {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* pequeños ajustes de accesibilidad */
+.btn:focus, nav a:focus {
+  outline: 3px solid rgba(111,78,55,0.18);
+  outline-offset: 3px;
+}
+
+
