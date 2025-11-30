@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kaffa Bunn — Video</title>
+    <style>
+        :root{
+            --accent:#6b4c3b;
+            --bg:#f4f4f4;
+            --panel:#ffffff;
+            --muted:#666;
+        }
+        *{box-sizing:border-box}
+        body{
+            margin:0;
+            font-family: "Segoe UI", Roboto, Arial, sans-serif;
+            /* Fondo de página (ajustable). Coloca ./imagenes/fondo.jpg en tu proyecto */
+            background-image: url('./imagenes/texto\ en\ blanco\ y\ ne.png');
+            background-repeat: no-repeat;
+            background-position: center top;
+            background-size: 40% auto;
+            background-attachment: scroll;
+            color:#222;
+            padding:24px;
+            display:flex;
+            justify-content:center;
+            background-color: rgba(0, 128, 83, 0.558);
+        }
+
+        /* responsive para fondo */
+        @media (max-width:920px){ body{ background-size:60% auto; } }
+        @media (max-width:420px){ body{ background-size:90% auto; } }
+
+        /* panel principal semitransparente para ver el fondo */
+        .page {
+            width: min(980px, 96%);
+            background: rgba(255, 255, 255, 0.664);
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+            padding: 20px;
+            margin: 24px 0;
+            backdrop-filter: blur(6px) saturate(1.05);
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+
+        /* Banner superior */
+        .banner{
+            width:100%;
+            display:flex;
+            justify-content:center;
+            margin-bottom:14px;
+            border-radius:10px;
+            overflow:hidden;
+            box-shadow:0 12px 30px rgba(0,0,0,0.12);
+        }
+        .banner img{
+            width:100%;
+            max-width:1200px;
+            height:auto;
+            display:block;
+            object-fit:cover;
+            aspect-ratio: 16/4;
+        }
+
+        /* marca de agua sobre el video */
+        .video-wrap { position:relative; }
+        .watermark {
+            position: absolute;
+            right: 12px;
+            bottom: 12px;
+            z-index: 15;
+            pointer-events: none;
+            opacity: 0.12;
+            filter: grayscale(100%) contrast(0.9);
+        }
+        .watermark img { max-width: 140px; display:block; }
+
+        /* tarjetas semitransparentes que dejan ver el fondo */
+        .card {
+            padding:12px;
+            border-radius:8px;
+            background: rgba(255,255,255,0.72);
+            backdrop-filter: blur(6px) saturate(1.05);
+            -webkit-backdrop-filter: blur(6px) saturate(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+            border:1px solid rgba(0,0,0,0.06);
+        }
+
+        /* CTA de reservas (WhatsApp) */
+        .card#reservas { display:flex; flex-direction:column; gap:.6rem; align-items:flex-start; }
+        .reserve-btn{
+            display:inline-flex;
+            align-items:center;
+            gap:.6rem;
+            background:linear-gradient(90deg,#25d366,#06b554);
+            color:#fff;
+            padding:.6rem .9rem;
+            border-radius:8px;
+            font-weight:700;
+            text-decoration:none;
+            box-shadow:0 8px 24px rgba(37,211,102,0.12);
+        }
+        .reserve-btn:hover{ transform:translateY(-3px); box-shadow:0 14px 36px rgba(6,181,84,0.14); }
+        .reserve-note{ color:var(--muted); font-size:.95rem; margin:0; }
+
+        header h1{ margin:0; color:var(--accent); font-size:1.6rem; }
+        header p{ margin:.35rem 0 1rem; color:var(--muted); }
+         .media { display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; }
+         .video-card{ flex:1 1 560px; min-width:320px; display:flex; flex-direction:column; align-items:center; }
+         .video-wrap{ position:relative; width:100%; max-width:720px; border-radius:10px; overflow:hidden; background:#000; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+         video{ display:block; width:100%; height:auto; background:#000; }
+         .big-play{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+         .big-play button{ pointer-events:auto; width:84px; height:84px; border-radius:50%; border:0; background:linear-gradient(180deg,#fff,#f3efe9); box-shadow:0 12px 30px rgba(0,0,0,0.24); color:var(--accent); font-size:28px; cursor:pointer; opacity:0.98; }
+         .big-play.hidden{ opacity:0; pointer-events:none; transition:opacity .18s; }
+         .controls { width:100%; display:flex; align-items:center; gap:10px; padding:10px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.01)); }
+         .controls .left, .controls .right{ display:flex; align-items:center; gap:8px; }
+         .btn { background:var(--accent); color:#fff; border:0; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:600; }
+         .btn.secondary{ background:#fff; color:var(--accent); border:1px solid rgba(107,76,59,0.08); }
+         .progress{ -webkit-appearance:none; appearance:none; width:100%; height:8px; background:linear-gradient(90deg,#eee,#ddd); border-radius:6px; overflow:hidden; cursor:pointer; }
+         .time{ font-size:.85rem; color:var(--muted); min-width:58px; text-align:center; }
+         .info { width:320px; min-width:260px; display:flex; flex-direction:column; gap:8px; }
+         .card h3{ margin:0 0 6px; color:var(--accent) }
+         .card p{ margin:0; color:var(--muted); font-size:.95rem; line-height:1.3 }
+         @media (max-width:920px){ .media{ flex-direction:column-reverse; align-items:center; } .info{ width:100%; } }
+        /* 📱 Ajuste general para pantallas pequeñas */
+@media (max-width: 600px) {
+    body {
+        padding: 40px 10px;
+        background-size: 120% auto;
+    }
+
+    .page {
+        padding: 12px;
+        border-radius: 10px;
+    }
+
+    header h1 {
+        font-size: 1.3rem;
+        text-align: center;
+    }
+
+    header p {
+        font-size: .9rem;
+        text-align: center;
+    }
+
+    /* Banner más pequeño */
+    .banner img {
+        aspect-ratio: 16/6;
+    }
+
+    /* La sección principal pasa a una sola columna */
+    .media {
+        flex-direction: column;
+        gap: 14px;
+        align-items: center;
+    }
+
+    /* El video se ajusta mejor a pantallas reducidas */
+    .video-card {
+        width: 100%;
+        flex: none;
+    }
+
+    .video-wrap {
+        max-width: 100%;
+        border-radius: 8px;
+    }
+
+    .big-play button {
+        width: 65px;
+        height: 65px;
+        font-size: 22px;
+    }
+
+    /* Controles compactos */
+    .controls {
+        flex-wrap: wrap;
+        padding: 6px;
+        gap: 6px;
+    }
+
+    .time {
+        font-size: 0.78rem;
+        min-width: 46px;
+    }
+
+    .btn {
+        padding: 6px 10px;
+        font-size: 0.78rem;
+    }
+
+    /* Barra de progreso más grande para dedos */
+    .progress {
+        height: 12px;
+        border-radius: 10px;
+    }
+
+    /* Tarjetas laterales más compactas */
+    .info {
+        width: 100%;
+        gap: 10px;
+    }
+
+    .card {
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    .card h3 {
+        font-size: 1rem;
+    }
+
+    .card p,
+    .card ul {
+        font-size: .88rem;
+    }
+
+    /* Botón WhatsApp más grande y centrado */
+    #reservas .reserve-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px;
+        font-size: .9rem;
+    }
+}
+
+/* 📱 Extra pequeño (menos de 380px) */
+@media (max-width: 380px) {
+    body {
+        padding: 20px 8px;
+        background-size: 150% auto;
+    }
+
+    .big-play button {
+        width: 55px;
+        height: 55px;
+        font-size: 18px;
+    }
+
+    .btn {
+        font-size: 0.72rem;
+        padding: 5px 8px;
+    }
+
+    header h1 {
+        font-size: 1.15rem;
+    }
+
+    header p {
+        font-size: 0.8rem;
+    }
+
+    .controls {
+        gap: 4px;
+    }
+
+    .card {
+        padding: 8px;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <main class="page" aria-labelledby="title">
+        <!-- Banner superior -->
+        <div class="banner" aria-hidden="true">
+            <img src="./imagenes/kaffa bum.jpg" alt="Kaffa Bunn">
+        </div>
+        <header>
+            <h1 id="title">Kaffa Bunn — Speciality Coffee</h1>
+            <p>Especialistas en cafés de origen y métodos de extracción. Mira el video y explora nuestro menú.</p>
+        </header>
+
+        <section class="media" aria-describedby="desc">
+            <div class="video-card">
+                <div class="video-wrap" aria-hidden="false">
+                    <video id="kaffaVideo" preload="metadata" poster="./imagenes/kaffabunn.jpg" playsinline>
+                        <source src="./videos/Kaffa Bunn - Speciality Coffee.mp4" type="video/mp4">
+                        Tu navegador no soporta la reproducción de video.
+                    </video>
+
+                    <!-- Marca de agua (no interactiva) -->
+                    <div class="watermark" aria-hidden="true">
+                        <img src="./imagenes/watermark.png" alt="Kaffa Bunn">
+                    </div>
+
+                    <div class="big-play" id="bigPlay">
+                        <button id="playBtn" aria-label="Reproducir video">►</button>
+                    </div>
+                </div>
+
+                <div class="controls" role="group" aria-label="Controles del video">
+                    <div class="left">
+                        <button class="btn" id="playToggle" aria-pressed="false">Play</button>
+                        <button class="btn secondary" id="muteBtn" aria-pressed="true">🔈</button>
+                        <span class="time" id="currentTime">0:00</span>
+                    </div>
+
+                    <input type="range" id="progress" class="progress" min="0" max="100" value="0" aria-label="Barra de progreso">
+
+                    <div class="right">
+                        <span class="time" id="duration">0:00</span>
+                        <button class="btn secondary" id="fsBtn" aria-label="Pantalla completa">⤢</button>
+                    </div>
+                </div>
+
+                <p id="desc" style="margin-top:.6rem;color:var(--muted);font-size:.95rem;text-align:center;">Atajos: Espacio reproducir/pausar · M silenciar · F pantalla completa</p>
+            </div>
+
+            <aside class="info" aria-label="Información de la cafetería">
+                <div class="card">
+                    <h3>Dirección</h3>
+                    <p>Calvo 185, Sucre</p>
+                </div>
+
+                <div class="card">
+                    <h3>Horario</h3>
+                    <p>Lun - Vie 10:00 - 20:00 · Sáb 15:00 - 20:00 · Dom cerrado</p>
+                </div>
+
+                <div class="card">
+                    <h3>Contacto</h3>
+                    <p>Tel: +591 71234567 · Instagram: @kaffabunn · Reservas para catas</p>
+                </div>
+
+                <div class="card" id="about">
+                    <h3>Nuestra filosofía</h3>
+                    <p>Kaffa Bunn nace para acercar cafés de especialidad al público: trabajo directo con productores, tueste ligero para resaltar los perfiles y un barismo cuidado en cada taza.</p>
+                </div>
+
+                <div class="card" id="specialties">
+                    <h3>Especialidades</h3>
+                    <ul style="margin:.4rem 0 0 1rem; color:var(--muted);">
+                        <li>Filtro de origen único (v60 / chemex)</li>
+                        <li>Espresso simple y doble</li>
+                        <li>Cold brew artesanal</li>
+                        <li>Bebidas de temporada</li>
+                        <li>Tostadas y bollería local</li>
+                    </ul>
+                </div>
+
+                <div class="card" id="menu">
+                    <h3>Menú (sin precios)</h3>
+                    <nav aria-label="Menú de Kaffa Bunn">
+                        <h4 style="margin:.25rem 0 .4rem 0;color:var(--accent);font-size:0.98rem;">Cafés</h4>
+                        <ul style="margin:0 0 .6rem 1rem; color:var(--muted);">
+                            <li>Espresso</li>
+                            <li>Americano</li>
+                            <li>Latte</li>
+                            <li>Capuccino</li>
+                            <li>Flat White</li>
+                        </ul>
+
+                        <h4 style="margin:.25rem 0 .4rem 0;color:var(--accent);font-size:0.98rem;">Filtrados</h4>
+                        <ul style="margin:0 0 .6rem 1rem; color:var(--muted);">
+                            <li>V60 (origen rotativo)</li>
+                            <li>Chemex</li>
+                            <li>Aeropress</li>
+                        </ul>
+
+                        <h4 style="margin:.25rem 0 .4rem 0;color:var(--accent);font-size:0.98rem;">Fríos y especiales</h4>
+                        <ul style="margin:0 0 .6rem 1rem; color:var(--muted);">
+                            <li>Cold Brew</li>
+                            <li>Iced Latte</li>
+                            <li>Affogato</li>
+                        </ul>
+
+                        <h4 style="margin:.25rem 0 .4rem 0;color:var(--accent);font-size:0.98rem;">Acompañamientos</h4>
+                        <ul style="margin:0 0 .6rem 1rem; color:var(--muted);">
+                            <li>Croissant</li>
+                            <li>Muffins</li>
+                            <li>Bagels</li>
+                            <li>Sándwiches</li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <div class="card" id="reservas">
+                    <h3>Reservas</h3>
+                    <p class="reserve-note">Reserva por WhatsApp indicando fecha, hora y número de personas. Te confirmamos en breve.</p>
+                    <a
+                        class="reserve-btn"
+                        href="https://wa.me/59161884256?text=Hola%2C%20quiero%20reservar%20una%20mesa%20en%20Kaffa%20Bunn.%20Fecha%3A%20%5Bdd%2Fmm%2Faaaa%5D%20Hora%3A%20%5BHH%3AMM%5D%20Personas%3A%20%5B%5D"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Reservar por WhatsApp al +591 61884256"
+                    >
+                        📲 Reservar por WhatsApp · +591 61884256
+                    </a>
+                </div>
+             </aside>
+         </section>
+     </main>
+
+     <script>
+        const video = document.getElementById('kaffaVideo');
+         const playBtn = document.getElementById('playBtn');
+         const playToggle = document.getElementById('playToggle');
+         const muteBtn = document.getElementById('muteBtn');
+         const progress = document.getElementById('progress');
+         const currentTimeEl = document.getElementById('currentTime');
+         const durationEl = document.getElementById('duration');
+         const bigPlay = document.getElementById('bigPlay');
+         const fsBtn = document.getElementById('fsBtn');
+         const videoWrap = document.querySelector('.video-wrap');
+
+         function formatTime(s){
+             if(isNaN(s)) return '0:00';
+             const m = Math.floor(s/60);
+             const sec = Math.floor(s%60).toString().padStart(2,'0');
+             return `${m}:${sec}`;
+         }
+
+         video.addEventListener('loadedmetadata', () => {
+             durationEl.textContent = formatTime(video.duration);
+             progress.max = Math.floor(video.duration);
+             video.setAttribute('aria-label', `Video de Kaffa Bunn, duración ${formatTime(video.duration)}`);
+         });
+
+         video.addEventListener('timeupdate', () => {
+             currentTimeEl.textContent = formatTime(video.currentTime);
+             progress.value = Math.floor(video.currentTime);
+         });
+
+         function togglePlay(){
+             if(video.paused){
+                 video.play().catch(()=>{});
+                 playBtn.textContent = '❚❚';
+                 playToggle.textContent = 'Pausa';
+                 playToggle.setAttribute('aria-pressed','true');
+                 bigPlay.classList.add('hidden');
+             } else {
+                 video.pause();
+                 playBtn.textContent = '►';
+                 playToggle.textContent = 'Play';
+                 playToggle.setAttribute('aria-pressed','false');
+                 bigPlay.classList.remove('hidden');
+             }
+         }
+
+         playBtn.addEventListener('click', togglePlay);
+         playToggle.addEventListener('click', togglePlay);
+
+         muteBtn.addEventListener('click', () => {
+             video.muted = !video.muted;
+             muteBtn.textContent = video.muted ? '🔇' : '🔈';
+             muteBtn.setAttribute('aria-pressed', String(video.muted));
+         });
+
+         progress.addEventListener('input', (e) => {
+             video.currentTime = e.target.value;
+         });
+         progress.addEventListener('change', (e) => {
+             video.currentTime = e.target.value;
+         });
+
+         videoWrap.addEventListener('mouseenter', ()=> { if(video.paused) bigPlay.classList.remove('hidden'); });
+         videoWrap.addEventListener('mouseleave', ()=> { if(video.paused) bigPlay.classList.add('hidden'); });
+
+         fsBtn.addEventListener('click', async () => {
+             const el = videoWrap;
+             try {
+                 if (!document.fullscreenElement) await el.requestFullscreen();
+                 else await document.exitFullscreen();
+             } catch (err) { console.warn('FS error', err); }
+         });
+
+         document.addEventListener('keydown', (e) => {
+             if(e.target.tagName.toLowerCase() === 'input' || e.target.isContentEditable) return;
+             if(e.code === 'Space'){ e.preventDefault(); togglePlay(); }
+             if(e.key.toLowerCase() === 'm'){ video.muted = !video.muted; muteBtn.textContent = video.muted ? '🔇' : '🔈'; }
+             if(e.key.toLowerCase() === 'f'){ fsBtn.click(); }
+             if(e.key === 'ArrowRight'){ video.currentTime = Math.min(video.duration, video.currentTime + 5); }
+             if(e.key === 'ArrowLeft'){ video.currentTime = Math.max(0, video.currentTime - 5); }
+         });
+
+         (function tryAutoPlay(){
+             video.muted = true;
+             video.play().then(()=> {
+                 playBtn.textContent = '❚❚';
+                 playToggle.textContent = 'Pausa';
+                 bigPlay.classList.add('hidden');
+             }).catch(()=> {
+                 bigPlay.classList.remove('hidden');
+             });
+         })();
+     </script>
+ </body>
+ </html>

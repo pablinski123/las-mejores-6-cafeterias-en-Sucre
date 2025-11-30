@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Caffé Serra — Video</title>
+    <style>
+        :root{
+            --accent:#6b4c3b;
+            --bg:#f4f4f4;
+            --panel:#ffffff;
+            --muted:#777;
+        }
+        *{box-sizing:border-box}
+        body{
+            margin:0;
+            font-family: "Segoe UI", Roboto, Arial, sans-serif;
+            /* Fondo de imagen de página (tamaño reducido) */
+            background-image: url("./imagenes/texto\ en\ blanco\ y\ ne.png");
+            background-repeat: no-repeat;
+            background-position: center top;
+            background-attachment: scroll;
+            background-color:rgb(182, 174, 119);
+            color:#222;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+            padding:100px;
+            display:flex;
+            justify-content:center;
+            /* ligero overlay global para mejorar contraste en caso de imagen muy clara */
+            --bg-overlay: rgba(0,0,0,0.04);
+        }
+
+        /* aumentar proporcionalmente el fondo en pantallas pequeñas */
+        @media (max-width: 920px) {
+            body {
+                background-size: 60% auto;
+                background-position: center top;
+            }
+        }
+        @media (max-width: 420px) {
+            body {
+                background-size: 90% auto;
+                background-position: center top;
+            }
+        }
+
+        .page {
+            width: min(980px, 96%);
+            /* panel semitransparente para dejar ver el fondo pero mantener legibilidad */
+            background: rgba(255,255,255,0.88);
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+            padding: 20px;
+            margin: 24px 0;
+            backdrop-filter: blur(6px) saturate(1.05);
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+
+        header h1{ margin:0; color:var(--accent); font-size:1.6rem; }
+        header p{ margin:.35rem 0 1rem; color:var(--muted); }
+
+        .media {
+            display:flex;
+            gap:20px;
+            align-items:flex-start;
+            flex-wrap:wrap;
+        }
+
+        /* contenedor del area de video centrado */
+        .video-card{
+            flex:1 1 560px;
+            min-width:320px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+        }
+
+        .video-wrap{
+            position:relative;
+            width:100%;
+            max-width:720px;
+            border-radius:10px;
+            overflow:hidden;
+            background:#000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        video{
+            display:block;
+            width:100%;
+            height:auto;
+            background:#000;
+        }
+
+        /* botón central grande */
+        .big-play{
+            position:absolute;
+            inset:0;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            pointer-events:none;
+        }
+        .big-play button{
+            pointer-events:auto;
+            width:84px;
+            height:84px;
+            border-radius:50%;
+            border:0;
+            background:linear-gradient(180deg, rgba(255,255,255,0.95), #fff);
+            box-shadow:0 12px 30px rgba(0,0,0,0.24);
+            color:var(--accent);
+            font-size:28px;
+            cursor:pointer;
+            opacity:0.98;
+        }
+        .big-play.hidden{ opacity:0; pointer-events:none; transition:opacity .18s; }
+
+        /* controles personalizados */
+        .controls {
+            width:100%;
+            display:flex;
+            align-items:center;
+            gap:10px;
+            padding:10px;
+            background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.01));
+        }
+
+        .controls .left,
+        .controls .right{ display:flex; align-items:center; gap:8px; }
+
+        .btn {
+            background:var(--accent);
+            color:#fff;
+            border:0;
+            padding:8px 12px;
+            border-radius:8px;
+            cursor:pointer;
+            font-weight:600;
+            transition:transform .12s, box-shadow .12s;
+        }
+        .btn.secondary{
+            background:#fff;
+            color:var(--accent);
+            border:1px solid rgba(107,76,59,0.08);
+        }
+        .btn:active{ transform:translateY(1px); }
+
+        .progress{
+            -webkit-appearance:none;
+            appearance:none;
+            width:100%;
+            height:8px;
+            background:linear-gradient(90deg,#eee,#ddd);
+            border-radius:6px;
+            overflow:hidden;
+            cursor:pointer;
+        }
+        .time{ font-size:.85rem; color:var(--muted); min-width:58px; text-align:center; }
+
+        /* info lateral */
+        .info {
+            width:320px;
+            min-width:260px;
+            display:flex;
+            flex-direction:column;
+            gap:8px;
+        }
+        .card {
+            padding:12px;
+            border-radius:8px;
+            /* fondo semitransparente para dejar ver el fondo de la página */
+            background: rgba(255,255,255,0.72);
+            /* ligero desenfoque para mejorar legibilidad sobre la imagen de fondo */
+            backdrop-filter: blur(6px) saturate(1.05);
+            -webkit-backdrop-filter: blur(6px) saturate(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+            border:1px solid rgba(0,0,0,0.06);
+        }
+        .card h3{ margin:0 0 6px; color:var(--accent) }
+        .card p{ margin:0; color:var(--muted); font-size:.95rem; line-height:1.3 }
+
+        /* CTA de reservas (WhatsApp) */
+        .card#reservas { display:flex; flex-direction:column; gap:.6rem; align-items:flex-start; }
+        .reserve-btn{
+            display:inline-flex;
+            align-items:center;
+            gap:.6rem;
+            background:linear-gradient(90deg,#25d366,#06b554);
+            color:#fff;
+            padding:.6rem .9rem;
+            border-radius:8px;
+            font-weight:700;
+            text-decoration:none;
+            box-shadow:0 8px 24px rgba(37,211,102,0.12);
+        }
+        .reserve-btn:hover{ transform:translateY(-3px); box-shadow:0 14px 36px rgba(6,181,84,0.14); }
+        .reserve-note{ color:var(--muted); font-size:.95rem; margin:0; }
+
+        /* Banner superior */
+        .banner{
+            width:100%;
+            display:flex;
+            justify-content:center;
+            margin-bottom:2px;
+            border-radius:1px;
+            overflow:hidden;
+            box-shadow:0 1px 3px rgba(0,0,0,0.12);
+            
+        }
+        .banner img{
+            width:100%;
+            max-width:1200px;
+            height:auto;
+            display:block;
+            object-fit:cover;
+            aspect-ratio: 16/4;
+            filter: saturate(0.98) contrast(0.98);
+        }
+
+        /* responsive */
+        @media (max-width:920px){
+            .media{ flex-direction:column-reverse; align-items:center; }
+            .info{ width:100%; }
+        }
+        /* 📱 Ajuste general para pantallas pequeñas */
+@media (max-width: 600px) {
+    body {
+        padding: 40px 10px;
+        background-size: 120% auto;
+    }
+
+    .page {
+        padding: 12px;
+        border-radius: 10px;
+    }
+
+    header h1 {
+        font-size: 1.3rem;
+        text-align: center;
+    }
+
+    header p {
+        font-size: .9rem;
+        text-align: center;
+    }
+
+    /* Banner más pequeño */
+    .banner img {
+        aspect-ratio: 16/6;
+    }
+
+    /* La sección principal pasa a una sola columna */
+    .media {
+        flex-direction: column;
+        gap: 14px;
+        align-items: center;
+    }
+
+    /* El video se ajusta mejor a pantallas reducidas */
+    .video-card {
+        width: 100%;
+        flex: none;
+    }
+
+    .video-wrap {
+        max-width: 100%;
+        border-radius: 8px;
+    }
+
+    .big-play button {
+        width: 65px;
+        height: 65px;
+        font-size: 22px;
+    }
+
+    /* Controles compactos */
+    .controls {
+        flex-wrap: wrap;
+        padding: 6px;
+        gap: 6px;
+    }
+
+    .time {
+        font-size: 0.78rem;
+        min-width: 46px;
+    }
+
+    .btn {
+        padding: 6px 10px;
+        font-size: 0.78rem;
+    }
+
+    /* Barra de progreso más grande para dedos */
+    .progress {
+        height: 12px;
+        border-radius: 10px;
+    }
+
+    /* Tarjetas laterales más compactas */
+    .info {
+        width: 100%;
+        gap: 10px;
+    }
+
+    .card {
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    .card h3 {
+        font-size: 1rem;
+    }
+
+    .card p,
+    .card ul {
+        font-size: .88rem;
+    }
+
+    /* Botón WhatsApp más grande y centrado */
+    #reservas .reserve-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px;
+        font-size: .9rem;
+    }
+}
+
+/* 📱 Extra pequeño (menos de 380px) */
+@media (max-width: 380px) {
+    body {
+        padding: 20px 8px;
+        background-size: 150% auto;
+    }
+
+    .big-play button {
+        width: 55px;
+        height: 55px;
+        font-size: 18px;
+    }
+
+    .btn {
+        font-size: 0.72rem;
+        padding: 5px 8px;
+    }
+
+    header h1 {
+        font-size: 1.15rem;
+    }
+
+    header p {
+        font-size: 0.8rem;
+    }
+
+    .controls {
+        gap: 4px;
+    }
+
+    .card {
+        padding: 8px;
+    }
+}
+
+    </style>
+</head>
+<body>
+        <main class="page" aria-labelledby="title">
+            <!-- Banner superior -->
+            <div class="banner" aria-hidden="true">
+                <img src="./imagenes/banner SERRA.jpg" alt="Caffé Serra">
+            </div>
+             <header>
+                 <h1 id="title">Caffé Serra</h1>
+                 <p>Bienvenido — conoce más sobre nuestra cafetería y mira el video.</p>
+             </header>
+
+        <section class="media" aria-describedby="desc">
+            <div class="video-card">
+                <div class="video-wrap" aria-hidden="false">
+                    <!-- video: usa nombre sin espacios/acentos; si tu archivo tiene otro nombre ajústalo -->
+                    <video id="serraVideo" preload="metadata" poster="./imagenes/serra.jpg" playsinline>
+                        <source src="./videos/Caffé Serra.mp4" type="video/mp4">
+                        Tu navegador no soporta la reproducción de video.
+                    </video>
+
+                    <div class="big-play" id="bigPlay">
+                        <button id="playBtn" aria-label="Reproducir video">►</button>
+                    </div>
+                </div>
+
+                <div class="controls" role="group" aria-label="Controles del video">
+                    <div class="left">
+                        <button class="btn" id="playToggle" aria-pressed="false">Play</button>
+                        <button class="btn secondary" id="muteBtn" aria-pressed="true">🔈</button>
+                        <span class="time" id="currentTime">0:00</span>
+                    </div>
+
+                    <input type="range" id="progress" class="progress" min="0" max="100" value="0" aria-label="Barra de progreso">
+
+                    <div class="right">
+                        <span class="time" id="duration">0:00</span>
+                        <button class="btn secondary" id="fsBtn" aria-label="Pantalla completa">⤢</button>
+                    </div>
+                </div>
+
+                <p id="desc" style="margin-top:.6rem;color:var(--muted);font-size:.95rem;text-align:center;">Consejo: usa Espacio para reproducir/pausar, M para silenciar y F para pantalla completa.</p>
+            </div>
+
+            <aside class="info" aria-label="Información de la cafetería">
+                <div class="card">
+                    <h3>Dirección</h3>
+                    <p>Arenales 27, Centro Histórico, Sucre</p>
+                </div>
+                <div class="card">
+                    <h3>Horario</h3>
+                    <p>Mar - Sáb 16:30 - 22:00 · Dom/Lun cerrado</p>
+                </div>
+                <div class="card">
+                    <h3>Contacto</h3>
+                    <p>Tel: +591 60315390 · Eventos: música en vivo los fines de semana</p>
+                </div>
+
+                <div class="card" id="about">
+                    <h3>Nuestra historia</h3>
+                    <p>Caffé Serra nace en 2012 con la misión de divulgar cafés de origen. Somos una cafetería familiar que selecciona granos de pequeños productores, tuesta en lotes pequeños y apuesta por métodos de extracción que resaltan perfil y complejidad.</p>
+                </div>
+
+                <div class="card" id="specialties">
+                    <h3>Especialidades</h3>
+                    <ul style="margin:.4rem 0 0 1rem; color:var(--muted);">
+                        <li>Espresso doble con blend de la casa</li>
+                        <li>V60 de origen único (cambio semanal)</li>
+                        <li>Cold brew en botella</li>
+                        <li>Capuccino art y bebidas de temporada</li>
+                        <li>Tostadas y repostería artesanal</li>
+                    </ul>
+                </div>
+
+                <div class="card" id="menu">
+                    <h3>Menú (sin precios)</h3>
+                    <nav aria-label="Menú de la cafetería">
+                        <h4 style="margin:.25rem 0 .4rem 0;color:var(--accent);font-size:0.98rem;">Cafés</h4>
+                        <ul style="margin:0 0 .6rem 1rem; color:var(--muted);">
+                            <li>Espresso</li>
+                            <li>Americano</li>
+                            <li>Latte</li>
+                            <li>Capuccino</li>
+                            <li>Flat White</li>
+                        </ul>
+
+                        <h4 style="margin:.25rem 0 .4rem 0;color:var(--accent);font-size:0.98rem;">Filtrados</h4>
+                        <ul style="margin:0 0 .6rem 1rem; color:var(--muted);">
+                            <li>V60 (origen único)</li>
+                            <li>Chemex</li>
+                            <li>Aeropress</li>
+                        </ul>
+
+                        <h4 style="margin:.25rem 0 .4rem 0;color:var(--accent);font-size:0.98rem;">Bebidas frías</h4>
+                        <ul style="margin:0 0 .6rem 1rem; color:var(--muted);">
+                            <li>Cold Brew</li>
+                            <li>Iced Latte</li>
+                            <li>Matcha Latte frío</li>
+                        </ul>
+
+                        <h4 style="margin:.25rem 0 .4rem 0;color:var(--accent);font-size:0.98rem;">Repostería y opciones saladas</h4>
+                        <ul style="margin:0 0 .6rem 1rem; color:var(--muted);">
+                            <li>Croissant (mantequilla / almendra)</li>
+                            <li>Muffin de temporada</li>
+                            <li>Bagel con relleno</li>
+                            <li>Sándwiches fríos y calientes</li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <div class="card" id="reservas">
+                    <h3>Reservas</h3>
+                    <p class="reserve-note">Reserva por WhatsApp indicando fecha, hora y número de personas. Te confirmamos en breve.</p>
+                    <a
+                        class="reserve-btn"
+                        href="https://wa.me/59161884256?text=Hola%2C%20quiero%20reservar%20una%20mesa%20en%20Caff%C3%A9%20Serra.%20Fecha%3A%20%5Bdd%2Fmm%2Faaaa%5D%20Hora%3A%20%5BHH%3AMM%5D%20Personas%3A%20%5B%5D"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Reservar por WhatsApp al +591 61884256"
+                    >
+                        📲 Reservar por WhatsApp · +591 61884256
+                    </a>
+                </div>
+             </aside>
+        </section>
+    </main>
+
+    <script>
+        // Selectores
+        const video = document.getElementById('serraVideo');
+        const playBtn = document.getElementById('playBtn');
+        const playToggle = document.getElementById('playToggle');
+        const muteBtn = document.getElementById('muteBtn');
+        const progress = document.getElementById('progress');
+        const currentTimeEl = document.getElementById('currentTime');
+        const durationEl = document.getElementById('duration');
+        const bigPlay = document.getElementById('bigPlay');
+        const fsBtn = document.getElementById('fsBtn');
+
+        // Helper: formato tiempo
+        function formatTime(s){
+            if(isNaN(s)) return '0:00';
+            const m = Math.floor(s/60);
+            const sec = Math.floor(s%60).toString().padStart(2,'0');
+            return `${m}:${sec}`;
+        }
+
+        // Actualizar duración cuando metadata cargue
+        video.addEventListener('loadedmetadata', () => {
+            durationEl.textContent = formatTime(video.duration);
+            progress.max = Math.floor(video.duration);
+        });
+
+        // Actualizar progreso y tiempo actual
+        video.addEventListener('timeupdate', () => {
+            currentTimeEl.textContent = formatTime(video.currentTime);
+            progress.value = Math.floor(video.currentTime);
+        });
+
+        // Play/pause logic
+        function togglePlay(){
+            if(video.paused){
+                video.play().catch(()=>{/* bloqueo autoplay; usuario verá controles */});
+                playBtn.textContent = '❚❚';
+                playToggle.textContent = 'Pausa';
+                playToggle.setAttribute('aria-pressed','true');
+                bigPlay.classList.add('hidden');
+            } else {
+                video.pause();
+                playBtn.textContent = '►';
+                playToggle.textContent = 'Play';
+                playToggle.setAttribute('aria-pressed','false');
+                bigPlay.classList.remove('hidden');
+            }
+        }
+
+        playBtn.addEventListener('click', togglePlay);
+        playToggle.addEventListener('click', togglePlay);
+
+        // Mute / unmute
+        muteBtn.addEventListener('click', () => {
+            video.muted = !video.muted;
+            muteBtn.textContent = video.muted ? '🔇' : '🔈';
+            muteBtn.setAttribute('aria-pressed', String(video.muted));
+        });
+
+        // Progreso: seek interactivo
+        progress.addEventListener('input', (e) => {
+            video.currentTime = e.target.value;
+        });
+
+        // Barra clickable para saltar también con click
+        progress.addEventListener('change', (e) => {
+            video.currentTime = e.target.value;
+        });
+
+        // Mostrar/ocultar big play al pasar el mouse por video
+        const videoWrap = video.closest('.video-wrap');
+        videoWrap.addEventListener('mouseenter', ()=> { if(video.paused) bigPlay.classList.remove('hidden'); });
+        videoWrap.addEventListener('mouseleave', ()=> { if(video.paused) bigPlay.classList.add('hidden'); });
+
+        // Fullscreen toggle
+        fsBtn.addEventListener('click', async () => {
+            const el = videoWrap;
+            try {
+                if (!document.fullscreenElement) await el.requestFullscreen();
+                else await document.exitFullscreen();
+            } catch (err) { console.warn('FS error', err); }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if(e.target.tagName.toLowerCase() === 'input' || e.target.isContentEditable) return;
+            if(e.code === 'Space'){ e.preventDefault(); togglePlay(); }
+            if(e.key.toLowerCase() === 'm'){ video.muted = !video.muted; muteBtn.textContent = video.muted ? '🔇' : '🔈'; }
+            if(e.key.toLowerCase() === 'f'){ fsBtn.click(); }
+            if(e.key === 'ArrowRight'){ video.currentTime = Math.min(video.duration, video.currentTime + 5); }
+            if(e.key === 'ArrowLeft'){ video.currentTime = Math.max(0, video.currentTime - 5); }
+        });
+
+        // Intentar autoplay muted para iniciar reprodución en navegadores que lo permiten
+        (function tryAutoPlay(){
+            video.muted = true;
+            video.play().then(()=> {
+                playBtn.textContent = '❚❚';
+                playToggle.textContent = 'Pausa';
+                bigPlay.classList.add('hidden');
+            }).catch(()=> {
+                // autoplay bloqueado, se muestran controles y el big-play
+                bigPlay.classList.remove('hidden');
+            });
+        })();
+
+        // Mejor accesibilidad: anunciar duración al cargar
+        video.addEventListener('loadedmetadata', () => {
+            video.setAttribute('aria-label', `Video de Caffé Serra, duración ${formatTime(video.duration)}`);
+        });
+    </script>
+</body>
+</html>
